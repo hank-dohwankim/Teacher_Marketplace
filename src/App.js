@@ -4,6 +4,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css"; //bootstrap css를 사용하기 위해서 불러옵니다.
 import Navbar from "./component/navbar/Navbar.js";
 import MainView from "./container/MainView.js";
+import Game from "./container/Game.js";
 import ContentView from "./component/contentView/ContentView.js";
 import { Switch, Route } from "react-router-dom"; //router를 사용하기 위해서 react router dom 불러옵니다.
 import Search from "./container/Search";
@@ -24,6 +25,7 @@ const Main = () => (
       */}
     <Route path="/view/:id" component={ContentView} />
     <Route path="/search" component={Search} />
+    <Route path="/game" component={Game} />
   </Switch>
 );
 
