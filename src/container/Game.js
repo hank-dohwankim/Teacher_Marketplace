@@ -7,64 +7,7 @@ import axios from 'axios';
 export class Game extends Component  {
 	constructor(props) {
 	  super(props);
-
-	  // this.src = [
-	  //   {
-	  //   	name: "[Official MV] MOMMY SON (마미손) - 소년점프 (feat. 배기성)",
-	  //   	src: "https://www.youtube.com/embed/D3ZFtSoWtRc",
-	  //   	id: "D3ZFtSoWtRc"
-	  //   },
-	  //   {
-	  //   	name: "수면유도400% 우주다큐멘터리 꿀잠 수면영상 우주의끝을 찾아서 (광고X)",
-	  //   	src: "https://www.youtube.com/embed/gcUAj4x2IVo",
-	  //   	id: "gcUAj4x2IVo"
-	  //   },
-	  //   {
-	  //   	name: "사진 실력을 한번에 2배로 끌어올릴 수 있는 연습법, 빛 읽기! I Hury 태영작가",
-	  //   	src: "https://www.youtube.com/embed/tHzcoVm7LtQ",
-	  //   	id: "tHzcoVm7LtQ"
-	  //   },
-	  //   {
-	  //   	name: "라이트룸 인물 보정에 대한 모든 것, 이거 하나로 그냥 끝내기 Lightroom Portrait Edit I Hury 태영작가",
-	  //   	src: "https://www.youtube.com/embed/onfI6B19dR4",
-	  //   	id: "onfI6B19dR4"
-	  //   },
-	  //   {
-	  //   	name: "About Time - How Long Will I Love You",
-	  //   	src: "https://www.youtube.com/embed/iQop_qs4xV4",
-	  //   	id: "iQop_qs4xV4"
-	  //   },
-	  //   {
-	  //   	name: "Sam Smith - I'm Not The Only One",
-	  //   	src: "https://www.youtube.com/embed/nCkpzqqog4k",
-	  //   	id: "nCkpzqqog4k"
-	  //   },
-	  //   {
-	  //   	name: "[천우희] 출중한 여자의 나혼자 요리하기 (※심쿵주의보 발령※)",
-	  //   	src: "https://www.youtube.com/embed/zfSIOeIJejc",
-	  //   	id: "zfSIOeIJejc"
-	  //   },
-	  //   {
-	  //   	name: "눈 속에서의 부쉬 크래프트 캠프 - 불, 대피소, 도끼, 요리 생선",
-	  //   	src: "https://www.youtube.com/embed/A3VdFB6QWt0",
-	  //   	id: "A3VdFB6QWt0"
-	  //   },
-	  //   {
-	  //   	name: " [KOR SUB] 다이어트에 성공하는 네 가지 쉬운 단계들(How To Lose Weight in 4 Easy Steps!",
-	  //   	src: "https://www.youtube.com/embed/yTbpFZ0mrEQ",
-	  //   	id: "yTbpFZ0mrEQ"
-	  //   },
-	  //   {
-	  //   	name: " 레이먼킴이 알려주는 완벽한 스테이크 굽는 법 (Feat. 포터하우스, 토마호크 스테이크)",
-	  //   	src: "https://www.youtube.com/embed/PhftrtBetQ4",
-	  //   	id: "PhftrtBetQ4"
-	  //   },
-	  //   {
-	  //   	name: "[최마태] 스마트폰/폰카로 사진 잘 찍는 4가지 방법 #1 (feat. Ripple_s 미나, 민욱, 아이폰)",
-	  //   	src: "https://www.youtube.com/embed/pOL_fJi3Od8",
-	  //   	id: "pOL_fJi3Od8"
-	  //   }
-   //  ]
+	  
       this.state = {
       	fullContent: {},// 메인화면에 가장 큰 영상 플레이어 콘텐츠를 가지는 state
 	  	contents : [] // 하단의 리스트에 들어갈 콘텐츠를 가지는 state
@@ -72,19 +15,10 @@ export class Game extends Component  {
 
 	}
 
-// 서버로 부터 받은 데이터를 내가 원하는 형태로 변경 하는 함수
-// {id: , name: } 형식으로 모든 데이터들을 변환
-  setContents = (data) => { 
-   let list = []
-    data.items.forEach((item, index) => {
-        list.push({id:item.id,name:item.snippet.title})
-    })
-    return list
-  }
-
 //컴포넌트 렌더링이 완료된 후 유튜브에서 데이터 불러옴
   componentDidMount() {
-  	this.fetchYoutube()
+	//   this.fetchYoutube();
+	  this.fetchSearch('games');
   }
 
 //메인화면에서 영상을 실행하는 플레이어를 제어하는 함수
@@ -109,7 +43,50 @@ export class Game extends Component  {
 	        fullContent:list[0]//가져온 데이터중 첫번째 데이터를 화면에서 실행 시킵니다.
 	    })
     })
+  } 
+
+
+  setContents = (data) => {
+    let list = [];
+    data.items.forEach((item) => {
+      if (item.id.videoId) {
+        list.push({ id: item.id.videoId, name: item.snippet.title });
+      }
+	});
+	
+	// console.log(list);
+	this.setState({
+		fullContent:list[0]
+	})
+    return list;
+  };
+
+  //function for showing the result by the search key
+
+  async fetchSearch(keyword) {
+    let maxResults = 30;
+    let token = "AIzaSyC-v1sIG2Wn3YnoD_7_bBS4zPDceDLKmLY";
+
+    try {
+      const { data } = await axios.get(
+        "https://www.googleapis.com/youtube/v3/search?q=" +
+          keyword +
+          "&part=snippet&key=" +
+          token +
+          "&maxResults=" +
+          maxResults
+      );
+
+	  this.setState({ 
+			contents: this.setContents(data),			
+		});
+    } catch {
+      console.log('');
+    } finally {
+      console.log("end");
+    }
   }
+
 
   render() {
     return (
